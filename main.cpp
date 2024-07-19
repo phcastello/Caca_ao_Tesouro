@@ -15,14 +15,14 @@ using namespace std;
 char JOGADORES[4] = {'\0','\0','\0','\0'};
 int PONTOS[4];
 
-char TABULEIRO [6][6];
-int tamTABULEIRO = sizeof(TABULEIRO)/ sizeof(TABULEIRO[0]); //facilitador para aumentar o tamanho da matriz
+char TABULEIRO [36][36];
+int tamTABULEIRO = sizeof(TABULEIRO)/ sizeof(TABULEIRO[0]); //facilitador para mudar o tamanho da matriz
 
 
 void tabuleiro(int qtdJogadores){
-    cout << "--------------------------------------------------------" <<endl;
+    cout << "-----------------------------------------------------------------------------------" <<endl;
     //colocar identificadores
-    cout << " #  A B C D E F";
+    cout << " #  AA AB AC AD AE AF AG AH AI AJ AK AL AM AN AO AP AQ AR AS AT AU AV AW AX AY AZ BA BB BC BD BE BF BG BH BI BJ";
     int p=1;
     for(int i=0; i<tamTABULEIRO; i++){    
         if(p<10){ 
@@ -35,15 +35,16 @@ void tabuleiro(int qtdJogadores){
         }
         p++; 
         for(int j=0; j<tamTABULEIRO; j++){
-            cout << TABULEIRO[i][j] << " ";
+            cout << TABULEIRO[i][j] << "  ";
         }
     }
     nl nl
 
     for(int i=0; i < qtdJogadores; i++){
-        cout << "Pontos Jogador " << i+1 << ": " << PONTOS[i];
+        cout << "Pontos Jogador " << JOGADORES[i] << ": " << PONTOS[i];
         nl
     }
+    cout << "-----------------------------------------------------------------------------------" <<endl;
 
 }
 
@@ -71,17 +72,13 @@ int main() {
         cout << "Jogadores selecionados: " << qtdJogadores;
         nl
     
-    for(int i=1; i < qtdJogadores+1; i++){
-        cout << "Jogador " << i << " indique sua inicial";nl
+    for(int i=0; i < qtdJogadores; i++){
+        cout << "Jogador " << i+1 << " indique sua inicial";nl
         cout << "Sua Inicial sera sua identificacao,";
         cout << " entao coloquem iniciais diferentes";nl
         cin >> JOGADORES[i];
     }
     
-    for(int i=0; i < 4; i++){
-        cout << JOGADORES[i];
-        nl
-    }
 
     tabuleiro(qtdJogadores);
 
