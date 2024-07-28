@@ -3,7 +3,9 @@ Espaço reservado para indexação de erros e Pendencias:
 TODO: colocar os jogadores em posição.
 TODO: implementar o layout
 TODO: função para que a matriz principal seja atualizada conforme os jogadores se deslocam
-
+TODO: função que checa uma movimentação valida do player
+TODO: funçao que move o player
+TODO: 
 
 
 
@@ -52,9 +54,9 @@ void inicializarmatrizes(){
 void layout(){
 
 }
-/*
+
 int random(int min, int max){
-    
+    /*
     A função gera um numero aleatorio num intervalo entre as variaveis min e max.
 
     Static faz a variavel geracao ser inicializada uma unica vez, mesmo que a funçao seja chamada outras vezes.
@@ -75,7 +77,7 @@ int random(int min, int max){
     distNormal(min, max) inicializa a distribuição para gerar numeros aleatorios inteiros no intervalo dado
 
     a função retorna o numero aleatorio da função
-    
+    */
 
 
     static mt19937 geracao(static_cast<unsigned int>(time(nullptr)));
@@ -83,47 +85,44 @@ int random(int min, int max){
 
     return distNormal(geracao);
 }
-*/
 
+/*
 int random(int min, int max){
     int n_aleatorio = min+rand()%max;
     return n_aleatorio;
 }
-
+*/
 
 void girarMatriz(){
     for (int i = 0; i < TAMANHOMATRIZ; i++) {
         for (int j = 0; j < TAMANHOMATRIZ; j++) {
-            swap(TABULEIRO_MOSTRAR[i][j], TABULEIRO_MOSTRAR[j][i]); //trocar para TABULEIRO_ESCONDIDO
+            swap(TABULEIRO_MOSTRAR[i][j], TABULEIRO_MOSTRAR[j][i]); //alterar para TABULEIRO_ESCONDIDO
         }
     }
     for(int i=0; i < TAMANHOMATRIZ; i++){
         int l=0; int r = TAMANHOMATRIZ - 1;
         while (l < r){
-            swap(TABULEIRO_MOSTRAR[i][l],TABULEIRO_MOSTRAR[i][r]); //trocar para TABULEIRO_ESCONDIDO
+            swap(TABULEIRO_MOSTRAR[i][l],TABULEIRO_MOSTRAR[i][r]); //alterar para TABULEIRO_ESCONDIDO
             l++; r--;
         }
     }
     cout << "Girando a matriz em 90 graus...";nl
 }
 
-void caverna(){
+void aleatorizarCaverna(){
     int var = random(1,4);
-    switch(var){
-        case '1':
-            girarMatriz();
-            break;
-        case '2':
-            girarMatriz();
-            girarMatriz();
-            break;
-        case '3':
-            girarMatriz();
-            girarMatriz();
-            girarMatriz();
-            break;
-        default:
-            break;
+    cout << "valor randomico da orientacao da matriz: " << var;nl
+    if(var == 1){
+        girarMatriz();
+    }
+    else if(var == 2){
+        girarMatriz();
+        girarMatriz();
+    }
+    else if(var == 3){
+        girarMatriz();
+        girarMatriz();
+        girarMatriz();
     }
 }
 
@@ -154,8 +153,8 @@ void colocarDiamantes(){
     //25% = 100
     for(int i=0; i < 100; i++){
         int quilateDiamante = random(1,10);
-        int Ldiamante = random(0, 20);
-        int Cdiamante = random(0, 20);
+        int Ldiamante = random(0, 30);
+        int Cdiamante = random(0, 30);
         TABULEIRO_MOSTRAR[Ldiamante][Cdiamante] = '1'; //retirar depois
 
         DIAMANTES[0][i] = Ldiamante;
@@ -177,7 +176,6 @@ bool inicialValida(char c){
     return true;
 }
 
-
 void tabuleiro(){
     cout << "--------------------------------------------------------------------------------------------------------------------------" <<endl;
     //colocar identificadores
@@ -194,7 +192,7 @@ void tabuleiro(){
         }
         contador++;
         for(int j=0; j<TAMANHOMATRIZ; j++){
-            cout << TABULEIRO_MOSTRAR[i][j] << "  "; 
+            cout << TABULEIRO_MOSTRAR[i][j] << "  ";
         }
     }
     nl nl
@@ -217,7 +215,6 @@ int main(){
             TABULEIRO_MOSTRAR[i][j] = TABULEIRO_ESCONDIDO[i][j];
         }
     }
-    cout << " Apos igualar as duas matrizes";
     //retirar depois
 
     while(qtdJogadores < 2 or qtdJogadores > 4){
@@ -241,10 +238,11 @@ int main(){
         }while(!(inicialValida(inicial)));
         JOGADORES[i] = inicial;
     }
+
     
     colocarDiamantes();
     tabuleiro();
-    girarMatriz();
+    aleatorizarCaverna();
     tabuleiro();
 
     return 0;
