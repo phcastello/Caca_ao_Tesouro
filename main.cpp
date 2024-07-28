@@ -1,7 +1,8 @@
 /*
 Espaço reservado para indexação de erros e Pendencias:
 TODO: colocar os jogadores em posição.
-TODO: fazer o layout
+TODO: implementar o layout
+TODO: função para que a matriz principal seja atualizada conforme os jogadores se deslocam
 
 
 
@@ -18,10 +19,11 @@ TODO: fazer o layout
 #define nl cout<<endl;
 using namespace std;
 
-char JOGADORES[4] = {'\0','\0','\0','\0'};
-int PONTOS[4];
+char JOGADORES[4] = {'\0'};
+int PONTOS[4] ={0};
 
-char TABULEIRO_ESCONDIDO [20][20] = {0};
+char TABULEIRO_ESCONDIDO [30][30];
+char TABULEIRO_MOSTRAR [30][30];
 
 
 /*
@@ -33,10 +35,26 @@ linha 2 = quilate
 int DIAMANTES [3][300];
 
 
-int tamTABULEIRO_ESCONDIDO = sizeof(TABULEIRO_ESCONDIDO)/sizeof(TABULEIRO_ESCONDIDO[0]); //facilitador para mudar o tamanho da matriz
+int TAMANHOMATRIZ = sizeof(TABULEIRO_ESCONDIDO)/sizeof(TABULEIRO_ESCONDIDO[0]); 
+//facilitador para mudar o tamanho da matriz
 
+int qtdJogadores=0;
+
+void inicializarmatrizes(){
+    for(int i=0;i<TAMANHOMATRIZ;i++){
+        for(int j=0;j<TAMANHOMATRIZ;j++){
+            TABULEIRO_ESCONDIDO[i][j] = '0';
+            TABULEIRO_MOSTRAR[i][j] = '0'; //alterar de '0' para um espaço ' '
+        }
+    }
+}
+
+void layout(){
+
+}
+/*
 int random(int min, int max){
-    /*
+    
     A função gera um numero aleatorio num intervalo entre as variaveis min e max.
 
     Static faz a variavel geracao ser inicializada uma unica vez, mesmo que a funçao seja chamada outras vezes.
@@ -57,7 +75,7 @@ int random(int min, int max){
     distNormal(min, max) inicializa a distribuição para gerar numeros aleatorios inteiros no intervalo dado
 
     a função retorna o numero aleatorio da função
-    */
+    
 
 
     static mt19937 geracao(static_cast<unsigned int>(time(nullptr)));
@@ -65,15 +83,71 @@ int random(int min, int max){
 
     return distNormal(geracao);
 }
+*/
 
-void iniciarTabuleiro(){
-    for(int i=0;i<tamTABULEIRO_ESCONDIDO;i++){
-        for(int j=0;j<tamTABULEIRO_ESCONDIDO;j++){
-            TABULEIRO_ESCONDIDO[i][j] = ' ';
+int random(int min, int max){
+    int n_aleatorio = min+rand()%max;
+    return n_aleatorio;
+}
+
+
+void girarMatriz(){
+    for (int i = 0; i < TAMANHOMATRIZ; i++) {
+        for (int j = 0; j < TAMANHOMATRIZ; j++) {
+            swap(TABULEIRO_MOSTRAR[i][j], TABULEIRO_MOSTRAR[j][i]); //trocar para TABULEIRO_ESCONDIDO
         }
     }
-    TABULEIRO_ESCONDIDO[20][6] = '|';
+    for(int i=0; i < TAMANHOMATRIZ; i++){
+        int l=0; int r = TAMANHOMATRIZ - 1;
+        while (l < r){
+            swap(TABULEIRO_MOSTRAR[i][l],TABULEIRO_MOSTRAR[i][r]); //trocar para TABULEIRO_ESCONDIDO
+            l++; r--;
+        }
+    }
+    cout << "Girando a matriz em 90 graus...";nl
+}
 
+void caverna(){
+    int var = random(1,4);
+    switch(var){
+        case '1':
+            girarMatriz();
+            break;
+        case '2':
+            girarMatriz();
+            girarMatriz();
+            break;
+        case '3':
+            girarMatriz();
+            girarMatriz();
+            girarMatriz();
+            break;
+        default:
+            break;
+    }
+}
+
+void deployPlayers(){
+    switch(qtdJogadores){
+        case 2:
+            TABULEIRO_MOSTRAR[14][14] = JOGADORES[0];
+            TABULEIRO_MOSTRAR[14][15] = JOGADORES[1];
+            break;
+
+        case 3:
+
+            TABULEIRO_MOSTRAR[14][14] = JOGADORES[0];
+            TABULEIRO_MOSTRAR[14][15] = JOGADORES[1];
+            TABULEIRO_MOSTRAR[15][14] = JOGADORES[2];
+            break;
+
+        case 4:
+            TABULEIRO_MOSTRAR[14][14] = JOGADORES[0];
+            TABULEIRO_MOSTRAR[14][15] = JOGADORES[1];
+            TABULEIRO_MOSTRAR[15][14] = JOGADORES[2];
+            TABULEIRO_MOSTRAR[15][15] = JOGADORES[3];
+            break;
+    }
 }
 
 void colocarDiamantes(){
@@ -82,7 +156,7 @@ void colocarDiamantes(){
         int quilateDiamante = random(1,10);
         int Ldiamante = random(0, 20);
         int Cdiamante = random(0, 20);
-        //TABULEIRO[Ldiamante][Cdiamante] = 'D'; //retirar depois
+        TABULEIRO_MOSTRAR[Ldiamante][Cdiamante] = '1'; //retirar depois
 
         DIAMANTES[0][i] = Ldiamante;
         DIAMANTES[1][i] = Cdiamante;
@@ -91,8 +165,8 @@ void colocarDiamantes(){
     }
 }
 
-bool inicialValida(char c, int qtdjogadores){
-    for(int i=0; i < qtdjogadores; i++){
+bool inicialValida(char c){
+    for(int i=0; i < qtdJogadores; i++){
         if(c == JOGADORES[i]){
             return false;
         }
@@ -103,14 +177,13 @@ bool inicialValida(char c, int qtdjogadores){
     return true;
 }
 
-void colocarJogadores(){}
 
-void tabuleiro(int qtdJogadores){
-    cout << "----------------------------------------------------------------------------------------------" <<endl;
+void tabuleiro(){
+    cout << "--------------------------------------------------------------------------------------------------------------------------" <<endl;
     //colocar identificadores
-    cout << " #  A  B  C  D  E  F  G  H  I  J  K  L  M  N  O  P  Q  R  S  T";
+    cout << " #  AA AB AC AD AE AF AG AH AI AJ AK AL AM AN AO AP AQ AR AS AT AU AV AW AX AY AZ BA BB BC BD";
     int contador=1;
-    for(int i=0; i<tamTABULEIRO_ESCONDIDO; i++){
+    for(int i=0; i<TAMANHOMATRIZ; i++){
         if(contador<10){
         cout <<endl;
         cout << " " << contador << " |";
@@ -120,8 +193,8 @@ void tabuleiro(int qtdJogadores){
         cout << contador << " |";
         }
         contador++;
-        for(int j=0; j<tamTABULEIRO_ESCONDIDO; j++){
-            cout << TABULEIRO_ESCONDIDO[i][j];
+        for(int j=0; j<TAMANHOMATRIZ; j++){
+            cout << TABULEIRO_MOSTRAR[i][j] << "  "; 
         }
     }
     nl nl
@@ -130,20 +203,29 @@ void tabuleiro(int qtdJogadores){
         cout << "Pontos Jogador " << JOGADORES[i] << ": " << PONTOS[i];
         nl
     }
-    cout << "-----------------------------------------------------------------------------------------------------------------------" <<endl;
+    cout << "--------------------------------------------------------------------------------------------------------------------------" <<endl;
 }
 
 
-int main() {
-    int qtdJogadores=0;
+int main(){
+    //colocar mensagem de introdução
+    inicializarmatrizes();
+
+    //retirar depois
+    for(int i=0; i < TAMANHOMATRIZ; i++){
+        for(int j=0; j < TAMANHOMATRIZ; j++){
+            TABULEIRO_MOSTRAR[i][j] = TABULEIRO_ESCONDIDO[i][j];
+        }
+    }
+    cout << " Apos igualar as duas matrizes";
+    //retirar depois
 
     while(qtdJogadores < 2 or qtdJogadores > 4){
         cout << "Indique a quantidade de jogadores(entre 2 e 4): ";
         cin >> qtdJogadores;
     }
-        cout << "Jogadores selecionados: " << qtdJogadores;
-        nl
 
+    cout << "Jogadores selecionados: " << qtdJogadores;nl
 
     cout << "Suas Iniciais serao suas identificacoes,";
     cout << " portanto, coloquem iniciais diferentes.";nl
@@ -153,21 +235,17 @@ int main() {
         char inicial;
         do{
             cout << "Lembre-se, a inicial nao pode ser igual a:";
-            cout << "'+', '-', 'D', 'O' e qualquer outra inicial ja usada.";nl
-            cout << "podem existir uma inicial em caixa alta e em caixa baixa.";nl
+            cout << "'+', '-', 'D', 'O' e qualquer outra inicial ja usada.";
+            cout << " Contudo, eh possivel existir uma inicial em caixa alta e em caixa baixa ao mesmo tempo.";nl
             cin >> inicial;
-        }while(!(inicialValida(inicial, qtdJogadores)));
+        }while(!(inicialValida(inicial)));
         JOGADORES[i] = inicial;
     }
     
-
-    tabuleiro(qtdJogadores);
     colocarDiamantes();
-
+    tabuleiro();
+    girarMatriz();
+    tabuleiro();
 
     return 0;
 }
-
-
-
-
