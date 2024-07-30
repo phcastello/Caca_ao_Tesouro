@@ -1,8 +1,9 @@
 /*
 Espaço reservado para indexação de erros e Pendencias:
 TODO: função para que a matriz principal seja atualizada conforme os jogadores se deslocam
-TODO: funçao que move o player
 TODO: função para colocar armadilha e buffs
+
+Bugs: quando o jogador tenta andar em uma posicao invalida e depois o corrige, o jogador anda duas casas, uma na posição invalida e uma na outra direção
 
 
 */
@@ -371,7 +372,6 @@ void tabuleiro(){
     }
     cout << "--------------------------------------------------------------------------------------------------------------------------" <<endl;
 }
-
 
 int main(){
     //colocar mensagem de introdução
