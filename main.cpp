@@ -4,7 +4,7 @@ TODO: função para que a matriz principal seja atualizada conforme os jogadores
 TODO: função para colocar armadilha e buffs
 
 Bugs: quando o jogador tenta andar em uma posicao invalida e depois o corrige, o jogador anda duas casas, uma na posição invalida e uma na outra direção
-
+ao girar a matriz, algumas paredes ficam erradas. contagem da orientação: 3,1 (provavelmente acontece com orientações impares)
 
 */
 
@@ -51,6 +51,29 @@ void inicializarmatrizes(){
     for(int i=0; i<2; i++){
         for(int j=0; j<4; j++){
             JOGADORES[i][j] = '0';
+        }
+    }
+
+}
+
+bool encimaJogador(int linha, int coluna){
+    for(int i=0; i < qtdJogadores; i++){
+        if(TABULEIRO_MOSTRAR[linha][coluna] == JOGADORES[0][i]){
+            return true;
+        }
+    }
+    return false;
+}
+
+void visaoJogador(int linha, int coluna, int tamVisao){
+    for(int i = -tamVisao; i <= tamVisao; i++){
+        for(int j = -tamVisao; j <= tamVisao; j++){
+            int linhaNova = linha + i;
+            int colunaNova = coluna + j;
+            int pos = TABULEIRO_ESCONDIDO[linhaNova][colunaNova];
+            if((!encimaJogador(linhaNova, colunaNova)) and (pos != '+' or pos != '-' or pos != 'D' or pos != 'O')){
+                TABULEIRO_MOSTRAR[linhaNova][colunaNova] = TABULEIRO_ESCONDIDO[linhaNova][colunaNova];
+            }
         }
     }
 
@@ -148,66 +171,122 @@ int random(int min, int max){
 }
 
 bool posicaoValida(int linha, int coluna){
-    if(linha == -1 or coluna == -1){
+    if(linha > 29 or linha < 0 or coluna > 29 or coluna < 0){
+        cout << "Posicao invalida! Index error \nTente novamente: ";
         return false;
-        cout << "Posicao invalida! Tente novamente: ";
     }
 
-    else if(linha > 29 or linha < 0 or coluna > 29 or coluna < 0){
+    else if(TABULEIRO_ESCONDIDO[linha][coluna] == '|' or TABULEIRO_ESCONDIDO[linha][coluna] == '-'){
+        cout << "Posicao invalida! Posicao não é '|' nem '-' \nTente novamente: ";
         return false;
-        cout << "Posicao invalida! Tente novamente: ";
     }
-
-    else if(TABULEIRO_ESCONDIDO[linha][coluna] != '0'){
-        return false;
-        cout << "Posicao invalida! Tente novamente: ";
-    }
-    
     return true;
 }
+
 
 void andar(int jogador){
     
     int linhaAtual = JOGADORES[1][jogador];
     int colunaAtual = JOGADORES[2][jogador];
+
     int linhaNova = linhaAtual;
     int colunaNova = colunaAtual;
 
-    char tecla;
+    int A1 = linhaNova;
+    int B1 = colunaNova;
+
+    int A2 = linhaAtual;
+    int B2 = colunaAtual;
+
+    bool movimentoValido = false;
+
     do{
+        char tecla;
         cin >> tecla;
         tecla = toupper(tecla);
 
         if(tecla == 'W'){
-            cout << "andando pra cima";nl
-            linhaNova = linhaAtual - 1;
+            A1 = A2 - 1;
+            if(posicaoValida(A1, A2)){
+                cout << "andando pra cima";nl
+                linhaNova = linhaAtual - 1;
+                movimentoValido = true;
+            }
+            else{
+                cout << "Posicao invalida! Tente novamente: ";
+            }
         }
         else if(tecla == 'A'){
-            cout << "andando pra esquerda";nl
-            colunaNova = colunaAtual - 1;
+            B1 = B2 - 1;
+            if(posicaoValida(B1, B2)){
+                cout << "andando pra esquerda";nl
+                colunaNova = colunaAtual - 1;
+                movimentoValido = true;
+            }
+            else{
+                cout << "Posicao invalida! Tente novamente: ";
+            }
         }
         else if(tecla == 'S'){
-            cout << "andando pra baixo";nl
-            linhaNova = linhaAtual + 1;
+            A1 = A2 + 1;
+            if(posicaoValida(A1, A2)){
+                cout << "andando pra baixo";nl
+                linhaNova = linhaAtual + 1;
+                movimentoValido = true;
+            }
+            else{
+                cout << "Posicao invalida! Tente novamente: ";
+            }
         }
         else if(tecla == 'D'){
-            cout << "andando pra direita";nl
-            colunaNova = colunaAtual + 1;
+            B1 = B2 - 1;
+            if(posicaoValida(B1, B2)){
+                cout << "andando pra direita";nl
+                colunaNova = colunaAtual + 1;
+                movimentoValido = true;
+            }
+            else{
+                cout << "Posicao invalida! Tente novamente: ";
+            }
         }
         else{
             cout << "Tecla invalida" << endl;
-            linhaNova = -1;
-            colunaNova = -1;
         }
 
-    }while(!posicaoValida(linhaNova, colunaNova));
+
+    }while(!movimentoValido);
+
+    visaoJogador(linhaNova,colunaNova,2);
 
     TABULEIRO_MOSTRAR[linhaNova][colunaNova] = JOGADORES[0][jogador];
     TABULEIRO_MOSTRAR[linhaAtual][colunaAtual] = '0';
 
+    TABULEIRO_ESCONDIDO[linhaAtual][colunaAtual] = '0';
+    TABULEIRO_ESCONDIDO[linhaNova][colunaNova] = TABULEIRO_MOSTRAR[linhaNova][colunaNova];
+
     JOGADORES[1][jogador] = linhaNova;
     JOGADORES[2][jogador] = colunaNova;
 
+    /*
+    for(int i=0; i < TAMANHOMATRIZ; i++){
+        for(int j=0; j < TAMANHOMATRIZ; j++){
+            if(i == JOGADORES[1][jogador] and j == JOGADORES[2][jogador]){
+                TABULEIRO_ESCONDIDO[i][j] = '0';
+            }
+        }
+    }
+
+    JOGADORES[1][jogador] = linhaNova;
+    JOGADORES[2][jogador] = colunaNova;
+
+    for(int i=0; i < TAMANHOMATRIZ; i++){
+        for(int j=0; j < TAMANHOMATRIZ; j++){
+            if(i == JOGADORES[1][jogador] and j == JOGADORES[2][jogador]){
+                TABULEIRO_ESCONDIDO[i][j] = TABULEIRO_MOSTRAR[i][j];
+            }
+        }
+    }
+    */
 }
 
 void girarMatriz(){
@@ -404,9 +483,17 @@ int main(){
     aleatorizarCaverna();
     colocarDiamantes();
     deployPlayers();
+
+    
     
     int jogadorAtual = 0;
     do{
+        for(int i=0; i < TAMANHOMATRIZ; i++){
+            for(int j=0; j < TAMANHOMATRIZ; j++){
+                cout << TABULEIRO_ESCONDIDO[i][j] << "  ";
+            }
+            nl
+        }
         tabuleiro();
         cout << "Vez do jogador " << JOGADORES[0][jogadorAtual];nl
         cout << "(w,a,s ou d) para se mover:";
