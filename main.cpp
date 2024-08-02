@@ -3,8 +3,7 @@ Espaço reservado para indexação de erros e Pendencias:
 TODO: função para que a matriz principal seja atualizada conforme os jogadores se deslocam
 TODO: função para colocar armadilha e buffs
 
-Bugs: um jogador passa por cima do outro.
-ao girar a matriz, algumas paredes ficam erradas. contagem da orientação: 3,1 (provavelmente acontece com orientações impares)
+Bugs: ao girar a matriz, algumas paredes ficam erradas. contagem da orientação: 3,1 (provavelmente acontece com orientações impares)
 
 */
 
