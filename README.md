@@ -53,13 +53,6 @@ Para compilar e executar o jogo, siga os passos abaixo:
 - **Pendências**: A função para colocar armadilhas e buffs ainda precisa ser implementada.
 - **Bugs**: Nenhum bug foi encontrado até o momento.
 
-## Contribuição
-
-Se você quiser contribuir para o projeto, fique à vontade para enviar um pull request ou abrir uma issue para discutir melhorias.
-
-## Licença
-
-Este projeto está licenciado sob a [Licença MIT](LICENSE).
 
 ---
 
