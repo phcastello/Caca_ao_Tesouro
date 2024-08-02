@@ -3,7 +3,7 @@ Espaço reservado para indexação de erros e Pendencias:
 TODO: função para que a matriz principal seja atualizada conforme os jogadores se deslocam
 TODO: função para colocar armadilha e buffs
 
-Bugs: quando o jogador tenta andar em uma posicao invalida e depois o corrige, o jogador anda duas casas, uma na posição invalida e uma na outra direção
+Bugs: um jogador passa por cima do outro.
 ao girar a matriz, algumas paredes ficam erradas. contagem da orientação: 3,1 (provavelmente acontece com orientações impares)
 
 */
@@ -171,16 +171,24 @@ int random(int min, int max){
 }
 
 bool posicaoValida(int linha, int coluna){
+    cout << "posicaoValida";nl
+    for(int i=0; i < qtdJogadores; i++){
+        if(linha == JOGADORES[1][i] and coluna == JOGADORES[2][i]){
+            return false;
+        }
+    }
     if(linha > 29 or linha < 0 or coluna > 29 or coluna < 0){
-        cout << "Posicao invalida! Index error \nTente novamente: ";
+        cout << "Posicao invalida! Index error.\nTente novamente: ";
         return false;
     }
-
     else if(TABULEIRO_ESCONDIDO[linha][coluna] == '|' or TABULEIRO_ESCONDIDO[linha][coluna] == '-'){
-        cout << "Posicao invalida! Posicao não é '|' nem '-' \nTente novamente: ";
+        cout << "Posicao invalida! A Posicao e uma parede!.\nTente novamente: ";
         return false;
     }
-    return true;
+    else{
+        cout << "return true";nl
+        return true;
+    }
 }
 
 
@@ -192,65 +200,70 @@ void andar(int jogador){
     int linhaNova = linhaAtual;
     int colunaNova = colunaAtual;
 
-    int A1 = linhaNova;
-    int B1 = colunaNova;
-
-    int A2 = linhaAtual;
-    int B2 = colunaAtual;
-
     bool movimentoValido = false;
 
+    
     do{
         char tecla;
         cin >> tecla;
         tecla = toupper(tecla);
+        cout << "tecla: " << tecla << endl;
 
         if(tecla == 'W'){
-            A1 = A2 - 1;
-            if(posicaoValida(A1, A2)){
-                cout << "andando pra cima";nl
-                linhaNova = linhaAtual - 1;
+            linhaNova = linhaAtual - 1;
+            colunaNova = colunaAtual;
+            if(posicaoValida(linhaNova, colunaNova)){
+                cout << "linhaNova: " << linhaNova;nl
+                cout << "colunaNova: " << colunaNova;nl
                 movimentoValido = true;
             }
             else{
-                cout << "Posicao invalida! Tente novamente: ";
+                linhaNova = linhaAtual + 1;
+                movimentoValido = false;
             }
         }
         else if(tecla == 'A'){
-            B1 = B2 - 1;
-            if(posicaoValida(B1, B2)){
-                cout << "andando pra esquerda";nl
-                colunaNova = colunaAtual - 1;
+            colunaNova = colunaAtual - 1;
+            linhaNova = linhaAtual;
+            if(posicaoValida(linhaNova, colunaNova)){
+                cout << "linhaNova: " << linhaNova;nl
+                cout << "colunaNova: " << colunaNova;nl
                 movimentoValido = true;
             }
             else{
-                cout << "Posicao invalida! Tente novamente: ";
+                colunaNova = colunaAtual + 1;
+                movimentoValido = false;
             }
         }
         else if(tecla == 'S'){
-            A1 = A2 + 1;
-            if(posicaoValida(A1, A2)){
-                cout << "andando pra baixo";nl
-                linhaNova = linhaAtual + 1;
+            linhaNova = linhaAtual + 1;
+            colunaNova = colunaAtual;
+            if(posicaoValida(linhaNova, colunaNova)){
+                cout << "linhaNova: " << linhaNova;nl
+                cout << "colunaNova: " << colunaNova;nl
                 movimentoValido = true;
             }
             else{
-                cout << "Posicao invalida! Tente novamente: ";
+                linhaNova = linhaAtual - 1;
+                movimentoValido = false;
             }
         }
         else if(tecla == 'D'){
-            B1 = B2 - 1;
-            if(posicaoValida(B1, B2)){
-                cout << "andando pra direita";nl
-                colunaNova = colunaAtual + 1;
+            colunaNova = colunaAtual + 1;
+            linhaNova = linhaAtual;
+            if(posicaoValida(linhaNova, colunaNova)){
+                cout << "linhaNova: " << linhaNova;nl
+                cout << "colunaNova: " << colunaNova;nl
                 movimentoValido = true;
             }
             else{
-                cout << "Posicao invalida! Tente novamente: ";
+                colunaNova = colunaAtual - 1;
+                movimentoValido = false;
             }
         }
         else{
-            cout << "Tecla invalida" << endl;
+            cout << "Tecla invalida\n Tente novamente:";nl
+            movimentoValido = false;
         }
 
 
@@ -485,15 +498,16 @@ int main(){
     deployPlayers();
 
     
-    
     int jogadorAtual = 0;
     do{
+        /*
         for(int i=0; i < TAMANHOMATRIZ; i++){
             for(int j=0; j < TAMANHOMATRIZ; j++){
                 cout << TABULEIRO_ESCONDIDO[i][j] << "  ";
             }
             nl
         }
+        */
         tabuleiro();
         cout << "Vez do jogador " << JOGADORES[0][jogadorAtual];nl
         cout << "(w,a,s ou d) para se mover:";
