@@ -3,8 +3,7 @@ Espaço reservado para indexação de erros e Pendencias:
 TODO: função para que a matriz principal seja atualizada conforme os jogadores se deslocam
 TODO: função para colocar armadilha e buffs
 
-Bugs: um jogador passa por cima do outro.
-ao girar a matriz, algumas paredes ficam erradas. contagem da orientação: 3,1 (provavelmente acontece com orientações impares)
+Bugs: nenhum que se tem ciencia (por enquanto)
 
 */
 
@@ -171,14 +170,14 @@ int random(int min, int max){
 }
 
 bool posicaoValida(int linha, int coluna){
-    cout << "posicaoValida";nl
+    cout << "posicaoValida?";nl
     for(int i=0; i < qtdJogadores; i++){
         if(linha == JOGADORES[1][i] and coluna == JOGADORES[2][i]){
             return false;
         }
     }
     if(linha > 29 or linha < 0 or coluna > 29 or coluna < 0){
-        cout << "Posicao invalida! Index error.\nTente novamente: ";
+        cout << "Posicao invalida! Fora dos limites.\nTente novamente: ";
         return false;
     }
     else if(TABULEIRO_ESCONDIDO[linha][coluna] == '|' or TABULEIRO_ESCONDIDO[linha][coluna] == '-'){
@@ -186,11 +185,10 @@ bool posicaoValida(int linha, int coluna){
         return false;
     }
     else{
-        cout << "return true";nl
+        cout << "Valida";nl
         return true;
     }
 }
-
 
 void andar(int jogador){
     
@@ -280,43 +278,30 @@ void andar(int jogador){
     JOGADORES[1][jogador] = linhaNova;
     JOGADORES[2][jogador] = colunaNova;
 
-    /*
-    for(int i=0; i < TAMANHOMATRIZ; i++){
-        for(int j=0; j < TAMANHOMATRIZ; j++){
-            if(i == JOGADORES[1][jogador] and j == JOGADORES[2][jogador]){
-                TABULEIRO_ESCONDIDO[i][j] = '0';
-            }
-        }
-    }
-
-    JOGADORES[1][jogador] = linhaNova;
-    JOGADORES[2][jogador] = colunaNova;
-
-    for(int i=0; i < TAMANHOMATRIZ; i++){
-        for(int j=0; j < TAMANHOMATRIZ; j++){
-            if(i == JOGADORES[1][jogador] and j == JOGADORES[2][jogador]){
-                TABULEIRO_ESCONDIDO[i][j] = TABULEIRO_MOSTRAR[i][j];
-            }
-        }
-    }
-    */
 }
 
 void girarMatriz(){
+    // Transposição da matriz
     for (int i = 0; i < TAMANHOMATRIZ; i++){
-        for (int j = 0; j < TAMANHOMATRIZ; j++){
-            swap(TABULEIRO_ESCONDIDO[i][j], TABULEIRO_ESCONDIDO[j][i]); //alterar para TABULEIRO_ESCONDIDO
+        for (int j = i + 1; j < TAMANHOMATRIZ; j++){
+            swap(TABULEIRO_ESCONDIDO[i][j], TABULEIRO_ESCONDIDO[j][i]);
         }
     }
-    for(int i=0; i < TAMANHOMATRIZ; i++){
-        int l=0; int r = TAMANHOMATRIZ - 1;
+
+    // Inversão horizontal
+    for(int i = 0; i < TAMANHOMATRIZ; i++){
+        int l = 0; 
+        int r = TAMANHOMATRIZ - 1;
         while (l < r){
-            swap(TABULEIRO_ESCONDIDO[i][l],TABULEIRO_ESCONDIDO[i][r]); //alterar para TABULEIRO_ESCONDIDO
-            l++; r--;
+            swap(TABULEIRO_ESCONDIDO[i][l], TABULEIRO_ESCONDIDO[i][r]);
+            l++; 
+            r--;
         }
     }
-    for(int i=0; i < TAMANHOMATRIZ; i++){
-        for(int j=0; j < TAMANHOMATRIZ; j++){
+
+    // Troca de caracteres
+    for(int i = 0; i < TAMANHOMATRIZ; i++){
+        for(int j = 0; j < TAMANHOMATRIZ; j++){
             if(TABULEIRO_ESCONDIDO[i][j] == '|'){
                 TABULEIRO_ESCONDIDO[i][j] = '-';
             }
@@ -325,7 +310,8 @@ void girarMatriz(){
             }
         }
     }
-    cout << "Girando a matriz em 90 graus...";nl
+
+    cout << "Girando a matriz em 90 graus..." << endl;
 }
 
 void aleatorizarCaverna(){
