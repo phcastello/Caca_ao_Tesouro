@@ -2,7 +2,9 @@
 Espaço reservado para indexação de erros e Pendencias:
 TODO: função para colocar armadilha e buffs
 
+
 Bugs: nenhum encontrado até agora
+
 
 */
 
