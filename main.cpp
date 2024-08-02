@@ -1,9 +1,8 @@
 /*
 Espaço reservado para indexação de erros e Pendencias:
-TODO: função para que a matriz principal seja atualizada conforme os jogadores se deslocam
 TODO: função para colocar armadilha e buffs
 
-Bugs: nenhum que se tem ciencia (por enquanto)
+Bugs: nenhum encontrado até agora
 
 */
 
@@ -13,14 +12,16 @@ Bugs: nenhum que se tem ciencia (por enquanto)
 #include<cctype>
 #include<string>
 #include<random>
-#define nl std::cout<<endl;
+#define nl std::cout<<std::endl;
 using namespace std;
 
-char JOGADORES[4][4];
-//linha 0 = inicial
-//linha 1 = linha
-//linha 2 = coluna
-//linha 3 = pontos
+char JOGADORES[4];
+
+int INFOJOGADORES[3][3];
+//linha 0 = linha
+//linha 1 = coluna
+//linha 2 = pontos
+//coluna = index de cada jogador
 
 char TABULEIRO_ESCONDIDO [30][30];
 char TABULEIRO_MOSTRAR [30][30];
@@ -30,8 +31,9 @@ DIAMANTES:
 linha 0 = linha
 linha 1 = coluna
 linha 2 = quilate
+coluna = cada diamante
 */
-int DIAMANTES [3][300];
+int DIAMANTES [3][225];
 
 
 int TAMANHOMATRIZ = sizeof(TABULEIRO_ESCONDIDO)/sizeof(TABULEIRO_ESCONDIDO[0]); 
@@ -42,14 +44,18 @@ int qtdJogadores=0;
 void inicializarmatrizes(){
     for(int i=0;i<TAMANHOMATRIZ;i++){
         for(int j=0;j<TAMANHOMATRIZ;j++){
-            TABULEIRO_ESCONDIDO[i][j] = '0';
+            TABULEIRO_ESCONDIDO[i][j] = ' ';
             TABULEIRO_MOSTRAR[i][j] = ' '; //alterar de '0' para um espaço ' '
         }
     }
 
-    for(int i=0; i<2; i++){
-        for(int j=0; j<4; j++){
-            JOGADORES[i][j] = '0';
+    for(int i=0; i<4; i++){
+        JOGADORES[i] = '0';
+    }
+
+    for(int i=0; i < 3; i++){
+        for(int j=0; j < 3; j++){
+            INFOJOGADORES[i][j] = 0;
         }
     }
 
@@ -57,7 +63,7 @@ void inicializarmatrizes(){
 
 bool encimaJogador(int linha, int coluna){
     for(int i=0; i < qtdJogadores; i++){
-        if(TABULEIRO_MOSTRAR[linha][coluna] == JOGADORES[0][i]){
+        if(TABULEIRO_MOSTRAR[linha][coluna] == JOGADORES[i]){
             return true;
         }
     }
@@ -170,9 +176,9 @@ int random(int min, int max){
 }
 
 bool posicaoValida(int linha, int coluna){
-    cout << "posicaoValida?";nl
     for(int i=0; i < qtdJogadores; i++){
-        if(linha == JOGADORES[1][i] and coluna == JOGADORES[2][i]){
+        if(linha == INFOJOGADORES[0][i] and coluna == INFOJOGADORES[1][i]){
+            cout << "Posicao invalida! Seu amigo esta ai!.\nTente novamente: ";
             return false;
         }
     }
@@ -185,15 +191,14 @@ bool posicaoValida(int linha, int coluna){
         return false;
     }
     else{
-        cout << "Valida";nl
         return true;
     }
 }
 
 void andar(int jogador){
     
-    int linhaAtual = JOGADORES[1][jogador];
-    int colunaAtual = JOGADORES[2][jogador];
+    int linhaAtual = INFOJOGADORES[0][jogador];
+    int colunaAtual = INFOJOGADORES[1][jogador];
 
     int linhaNova = linhaAtual;
     int colunaNova = colunaAtual;
@@ -205,14 +210,11 @@ void andar(int jogador){
         char tecla;
         cin >> tecla;
         tecla = toupper(tecla);
-        cout << "tecla: " << tecla << endl;
 
         if(tecla == 'W'){
             linhaNova = linhaAtual - 1;
             colunaNova = colunaAtual;
             if(posicaoValida(linhaNova, colunaNova)){
-                cout << "linhaNova: " << linhaNova;nl
-                cout << "colunaNova: " << colunaNova;nl
                 movimentoValido = true;
             }
             else{
@@ -224,8 +226,6 @@ void andar(int jogador){
             colunaNova = colunaAtual - 1;
             linhaNova = linhaAtual;
             if(posicaoValida(linhaNova, colunaNova)){
-                cout << "linhaNova: " << linhaNova;nl
-                cout << "colunaNova: " << colunaNova;nl
                 movimentoValido = true;
             }
             else{
@@ -237,8 +237,6 @@ void andar(int jogador){
             linhaNova = linhaAtual + 1;
             colunaNova = colunaAtual;
             if(posicaoValida(linhaNova, colunaNova)){
-                cout << "linhaNova: " << linhaNova;nl
-                cout << "colunaNova: " << colunaNova;nl
                 movimentoValido = true;
             }
             else{
@@ -250,8 +248,6 @@ void andar(int jogador){
             colunaNova = colunaAtual + 1;
             linhaNova = linhaAtual;
             if(posicaoValida(linhaNova, colunaNova)){
-                cout << "linhaNova: " << linhaNova;nl
-                cout << "colunaNova: " << colunaNova;nl
                 movimentoValido = true;
             }
             else{
@@ -267,16 +263,26 @@ void andar(int jogador){
 
     }while(!movimentoValido);
 
-    visaoJogador(linhaNova,colunaNova,2);
+    visaoJogador(linhaNova,colunaNova,4);
 
-    TABULEIRO_MOSTRAR[linhaNova][colunaNova] = JOGADORES[0][jogador];
-    TABULEIRO_MOSTRAR[linhaAtual][colunaAtual] = '0';
+    TABULEIRO_MOSTRAR[linhaNova][colunaNova] = JOGADORES[jogador];
+    TABULEIRO_MOSTRAR[linhaAtual][colunaAtual] = ' ';
 
-    TABULEIRO_ESCONDIDO[linhaAtual][colunaAtual] = '0';
+    TABULEIRO_ESCONDIDO[linhaAtual][colunaAtual] = ' ';
     TABULEIRO_ESCONDIDO[linhaNova][colunaNova] = TABULEIRO_MOSTRAR[linhaNova][colunaNova];
 
-    JOGADORES[1][jogador] = linhaNova;
-    JOGADORES[2][jogador] = colunaNova;
+    INFOJOGADORES[0][jogador] = linhaNova;
+    INFOJOGADORES[1][jogador] = colunaNova;
+
+    //para checar se tem diamantes
+    for(int j=0; j < 225; j++){
+            if(linhaNova == DIAMANTES[0][j] and colunaNova == DIAMANTES[1][j]){
+                INFOJOGADORES[2][jogador] += DIAMANTES[2][j];
+                cout << "Parabens jogador " << JOGADORES[jogador] << "! \nDiamante encontrado!";nl
+                cout << "O valor do diamante eh de " << DIAMANTES[2][j] << " quilates";nl
+            }
+        
+    }
 
 }
 
@@ -332,38 +338,42 @@ void aleatorizarCaverna(){
 }
 
 void deployPlayers(){
+    //linha 0 = linha
+    //linha 1 = coluna
+    //linha 2 = pontos
+    //coluna = index de cada jogador
     switch(qtdJogadores){
         case 2:
-            TABULEIRO_MOSTRAR[14][14] = JOGADORES[0][0]; 
-            JOGADORES[1][0] = 14; JOGADORES[2][0] = 14;
+            TABULEIRO_MOSTRAR[14][14] = JOGADORES[0]; 
+            INFOJOGADORES[0][0] = 14; INFOJOGADORES[1][0] = 14; //estou aqui
 
-            TABULEIRO_MOSTRAR[14][15] = JOGADORES[0][1]; 
-            JOGADORES[1][1] = 14; JOGADORES[2][1] = 15;
+            TABULEIRO_MOSTRAR[14][15] = JOGADORES[1]; 
+            INFOJOGADORES[0][1] = 14; INFOJOGADORES[1][1] = 15;
             break;
         case 3:
 
-            TABULEIRO_MOSTRAR[14][14] = JOGADORES[0][0]; 
-            JOGADORES[1][0] = 14; JOGADORES[2][0] = 15;
+            TABULEIRO_MOSTRAR[14][14] = JOGADORES[0]; 
+            INFOJOGADORES[0][0] = 14; INFOJOGADORES[1][0] = 15;
 
-            TABULEIRO_MOSTRAR[14][15] = JOGADORES[0][1]; 
-            JOGADORES[1][1] = 14; JOGADORES[2][1] = 15;
+            TABULEIRO_MOSTRAR[14][15] = JOGADORES[1]; 
+            INFOJOGADORES[0][1] = 14; INFOJOGADORES[1][1] = 15;
 
-            TABULEIRO_MOSTRAR[15][14] = JOGADORES[0][2]; 
-            JOGADORES[1][2] = 15; JOGADORES[2][2] = 14;
+            TABULEIRO_MOSTRAR[15][14] = JOGADORES[2]; 
+            INFOJOGADORES[0][2] = 15; INFOJOGADORES[1][2] = 14;
             break;
 
         case 4:
-            TABULEIRO_MOSTRAR[14][14] = JOGADORES[0][0]; 
-            JOGADORES[1][0] = 14; JOGADORES[2][0] = 15;
+            TABULEIRO_MOSTRAR[14][14] = JOGADORES[0]; 
+            INFOJOGADORES[0][0] = 14; INFOJOGADORES[1][0] = 15;
 
-            TABULEIRO_MOSTRAR[14][15] = JOGADORES[0][1]; 
-            JOGADORES[1][1] = 14; JOGADORES[2][1] = 15;
+            TABULEIRO_MOSTRAR[14][15] = JOGADORES[1]; 
+            INFOJOGADORES[0][1] = 14; INFOJOGADORES[1][1] = 15;
 
-            TABULEIRO_MOSTRAR[15][14] = JOGADORES[0][2]; 
-            JOGADORES[1][2] = 15; JOGADORES[2][2] = 14;
+            TABULEIRO_MOSTRAR[15][14] = JOGADORES[2]; 
+            INFOJOGADORES[0][2] = 15; INFOJOGADORES[1][2] = 14;
 
-            TABULEIRO_MOSTRAR[15][15] = JOGADORES[0][3]; 
-            JOGADORES[1][3] = 15; JOGADORES[2][3] = 15;
+            TABULEIRO_MOSTRAR[15][15] = JOGADORES[3]; 
+            INFOJOGADORES[0][3] = 15; INFOJOGADORES[1][3] = 15;
             break;
     }
 }
@@ -374,7 +384,7 @@ bool diamanteErrado(int linha, int coluna){
     }
     else{
         for(int i=0; i < 4; i++){
-            if(TABULEIRO_MOSTRAR[linha][coluna] == JOGADORES[0][i]){
+            if(TABULEIRO_MOSTRAR[linha][coluna] == JOGADORES[i]){
                 return true;
             }
         }
@@ -393,7 +403,7 @@ void colocarDiamantes() {
 
         int quilateDiamante = random(1, 10);
 
-        //TABULEIRO_MOSTRAR[Ldiamante][Cdiamante] = '1'; // retirar depois
+        //TABULEIRO_ESCONDIDO[Ldiamante][Cdiamante] = '1'; // retirar depois
 
         DIAMANTES[0][i] = Ldiamante;
         DIAMANTES[1][i] = Cdiamante;
@@ -403,7 +413,7 @@ void colocarDiamantes() {
 
 bool inicialValida(char c){
     for(int i=0; i < qtdJogadores; i++){
-        if(c == JOGADORES[0][i]){
+        if(c == JOGADORES[i]){
             return false;
         }
     }
@@ -415,8 +425,8 @@ bool inicialValida(char c){
 
 bool vitoria(){
     for(int i=0; i < qtdJogadores; i++){
-        if(JOGADORES[3][i] >= 100){
-            cout << "Jogador " << JOGADORES[0][i] << " Venceu!";nl
+        if(INFOJOGADORES[2][i] >= 100){
+            cout << "Jogador " << JOGADORES[i] << " Venceu!";nl
             cout << "Parabens!";nl
             return true;
         }
@@ -445,7 +455,7 @@ void tabuleiro(){
     nl nl
 
     for(int i=0; i < qtdJogadores; i++){
-        cout << "Pontos Jogador " << JOGADORES[0][i] << ": " << JOGADORES[3][i];
+        cout << "Pontos Jogador " << JOGADORES[i] << ": " << INFOJOGADORES[2][i];
         nl
     }
     cout << "--------------------------------------------------------------------------------------------------------------------------" <<endl;
@@ -475,7 +485,7 @@ int main(){
             cout << "Contudo, eh possivel existir uma inicial em caixa alta e em caixa baixa ao mesmo tempo.";nl
             cin >> inicial;
         }while(!(inicialValida(inicial)));
-        JOGADORES[0][i] = inicial;
+        JOGADORES[i] = inicial;
     }
 
     layout();
@@ -495,7 +505,7 @@ int main(){
         }
         */
         tabuleiro();
-        cout << "Vez do jogador " << JOGADORES[0][jogadorAtual];nl
+        cout << "Vez do jogador " << JOGADORES[jogadorAtual];nl
         cout << "(w,a,s ou d) para se mover:";
         andar(jogadorAtual);
         jogadorAtual = (jogadorAtual + 1) % qtdJogadores;
