@@ -1,6 +1,6 @@
-# Jogo de Caverna com Diamantes
+# Jogo de Caça ao Tesouro
 
-Este é um jogo em C++ onde jogadores exploram uma caverna em um tabuleiro para encontrar diamantes e evitar paredes. O objetivo é acumular pontos encontrando diamantes, e o primeiro jogador a alcançar 100 pontos vence.
+Este é um jogo em C++ onde jogadores exploram uma caverna em um tabuleiro para encontrar diamantes e evitar paredes e armadilhas. O objetivo é acumular pontos encontrando diamantes, e o primeiro jogador a alcançar 100 pontos vence.
 
 ## Funcionalidades
 
