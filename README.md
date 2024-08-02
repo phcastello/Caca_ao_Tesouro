@@ -56,4 +56,4 @@ Para compilar e executar o jogo, siga os passos abaixo:
 
 ---
 
-Jogo produzido por Pedro Castello e Patrick Correa.
+Jogo produzido por Pedro Castello e Patrick Correa como projeto do final do primeiro periodo de faculdade na UNICENTRO Guarapuava.
