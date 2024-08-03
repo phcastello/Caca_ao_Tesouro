@@ -5,6 +5,7 @@ TODO: função para colocar armadilha e buffs
 
 Bugs: nenhum encontrado até agora
 
+
 */
 
 #include<iostream>
