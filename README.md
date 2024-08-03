@@ -50,7 +50,7 @@ Para compilar e executar o jogo, siga os passos abaixo:
 
 ## Notas
 
-- **Pendências**: A função para colocar armadilhas e buffs ainda precisa ser implementada.
+- **Pendências**: Nenhuma, jogo completo.
 - **Bugs**: Nenhum bug foi encontrado até o momento.
 
 
