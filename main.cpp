@@ -2,6 +2,7 @@
 Espaço reservado para indexação de erros e Pendencias:
 TODO: função para colocar armadilha e buffs
 
+
 Bugs: nenhum encontrado até agora
 
 */
@@ -22,10 +23,16 @@ int INFOJOGADORES[3][3];
 //linha 1 = coluna
 //linha 2 = pontos
 //coluna = index de cada jogador
+const int TAMANHOMATRIZ = 30;
+const int TAMANHOTUNEL = 90;
+const int TAMANHOPROSSIGA = 45;
+//facilitador para mudar o tamanho da matriz
 
-char TABULEIRO_ESCONDIDO [30][30];
-char TABULEIRO_MOSTRAR [30][30];
+char TABULEIRO_ESCONDIDO[TAMANHOMATRIZ][TAMANHOMATRIZ];
+char TABULEIRO_MOSTRAR[TAMANHOMATRIZ][TAMANHOMATRIZ];
 
+
+int DIAMANTES[3][225];
 /*
 DIAMANTES:
 linha 0 = linha
@@ -33,11 +40,14 @@ linha 1 = coluna
 linha 2 = quilate
 coluna = cada diamante
 */
-int DIAMANTES [3][225];
 
 
-int TAMANHOMATRIZ = sizeof(TABULEIRO_ESCONDIDO)/sizeof(TABULEIRO_ESCONDIDO[0]); 
-//facilitador para mudar o tamanho da matriz
+int TUNELSEMSAIDA[2][TAMANHOTUNEL];
+//linha 0 = linha
+//linha 1 = coluna
+int PROSSIGA[2][TAMANHOPROSSIGA];
+//linha 0 = linha
+//linha 1 = coluna
 
 int qtdJogadores=0;
 
@@ -45,7 +55,7 @@ void inicializarmatrizes(){
     for(int i=0;i<TAMANHOMATRIZ;i++){
         for(int j=0;j<TAMANHOMATRIZ;j++){
             TABULEIRO_ESCONDIDO[i][j] = ' ';
-            TABULEIRO_MOSTRAR[i][j] = ' '; //alterar de '0' para um espaço ' '
+            TABULEIRO_MOSTRAR[i][j] = ' '; 
         }
     }
 
@@ -56,6 +66,18 @@ void inicializarmatrizes(){
     for(int i=0; i < 3; i++){
         for(int j=0; j < 3; j++){
             INFOJOGADORES[i][j] = 0;
+        }
+    }
+    
+    for(int i=0; i < 2; i++){
+        for(int j=0; j < 90; j++){
+            TUNELSEMSAIDA[i][j] = 0;
+        }
+    }
+
+    for(int i=0; i < 2; i++){
+        for(int j=0; j < 45; j++){
+            PROSSIGA[i][j] = 0;
         }
     }
 
@@ -276,25 +298,45 @@ void andar(int jogador){
 
     //para checar se tem diamantes
     for(int j=0; j < 225; j++){
-            if(linhaNova == DIAMANTES[0][j] and colunaNova == DIAMANTES[1][j]){
-                INFOJOGADORES[2][jogador] += DIAMANTES[2][j];
-                cout << "Parabens jogador " << JOGADORES[jogador] << "! \nDiamante encontrado!";nl
-                cout << "O valor do diamante eh de " << DIAMANTES[2][j] << " quilates";nl
-            }
-        
+        if(linhaNova == DIAMANTES[0][j] and colunaNova == DIAMANTES[1][j]){
+            INFOJOGADORES[2][jogador] += DIAMANTES[2][j];
+            cout << "Parabens jogador " << JOGADORES[jogador] << "! \nDiamante encontrado!";nl
+            cout << "O valor do diamante eh de " << DIAMANTES[2][j] << " quilates";nl
+            DIAMANTES[0][j] = '\0';
+            DIAMANTES[1][j] = '\0';
+        }
+    }
+    //para checar se tem tunel
+    for(int j=0; j < 90; j++){
+        if(linhaNova == TUNELSEMSAIDA[0][j] and colunaNova == TUNELSEMSAIDA[1][j]){
+            INFOJOGADORES[2][jogador] -= 10;
+            cout << "Que pena jogador  " << JOGADORES[jogador] << "! \nVoce caiu em um tunel sem saida!";nl
+            cout << "Voce perdeu 10 pontos";nl
+            TUNELSEMSAIDA[0][j] = '\0';
+            TUNELSEMSAIDA[1][j] = '\0';
+        }
     }
 
+    for(int j=0; j < 90; j++){
+        if(linhaNova == PROSSIGA[0][j] and colunaNova == PROSSIGA[1][j]){
+            INFOJOGADORES[2][jogador] += 3;
+            cout << "Parabens jogador " << JOGADORES[jogador] << "! \nProssiga encontrado!";nl
+            cout << "Voce ganhou 3 pontos";nl
+            PROSSIGA[0][j] = '\0';
+            PROSSIGA[1][j] = '\0';
+        }
+    }
 }
 
 void girarMatriz(){
-    // Transposição da matriz
+    //Transposição da matriz
     for (int i = 0; i < TAMANHOMATRIZ; i++){
         for (int j = i + 1; j < TAMANHOMATRIZ; j++){
             swap(TABULEIRO_ESCONDIDO[i][j], TABULEIRO_ESCONDIDO[j][i]);
         }
     }
 
-    // Inversão horizontal
+    //Inversão horizontal
     for(int i = 0; i < TAMANHOMATRIZ; i++){
         int l = 0; 
         int r = TAMANHOMATRIZ - 1;
@@ -305,7 +347,7 @@ void girarMatriz(){
         }
     }
 
-    // Troca de caracteres
+    //Troca de caracteres
     for(int i = 0; i < TAMANHOMATRIZ; i++){
         for(int j = 0; j < TAMANHOMATRIZ; j++){
             if(TABULEIRO_ESCONDIDO[i][j] == '|'){
@@ -378,7 +420,22 @@ void deployPlayers(){
     }
 }
 
-bool diamanteErrado(int linha, int coluna){
+bool interativosErrados(int linha, int coluna){
+    for(int i=0; i < 225; i++){
+        if(linha == DIAMANTES[0][i] and coluna == DIAMANTES[1][i]){
+            return true;
+        }
+    }
+    for(int i=0; i < TAMANHOPROSSIGA; i++){
+        if(linha == PROSSIGA[0][i] and coluna == PROSSIGA[1][i]){
+            return true;
+        }
+    }
+    for(int i=0; i < TAMANHOTUNEL; i++){
+        if(linha == TUNELSEMSAIDA[0][i] and coluna == TUNELSEMSAIDA[1][i]){
+            return true;
+        }
+    }
     if(TABULEIRO_MOSTRAR[linha][coluna] == '|' or TABULEIRO_MOSTRAR[linha][coluna] == '-'){
             return true;
     }
@@ -392,14 +449,14 @@ bool diamanteErrado(int linha, int coluna){
     return false;
 }
 
-void colocarDiamantes() {
+void colocarInterativos() {
     for (int i=0; i < 225; i++){
         int Ldiamante, Cdiamante;
 
         do{
             Ldiamante = random(0, TAMANHOMATRIZ-1);
             Cdiamante = random(0, TAMANHOMATRIZ-1);
-        }while(diamanteErrado(Ldiamante,Cdiamante));
+        }while(interativosErrados(Ldiamante,Cdiamante));
 
         int quilateDiamante = random(1, 10);
 
@@ -408,6 +465,32 @@ void colocarDiamantes() {
         DIAMANTES[0][i] = Ldiamante;
         DIAMANTES[1][i] = Cdiamante;
         DIAMANTES[2][i] = quilateDiamante;
+    }
+
+    for (int i=0; i < 90; i++){
+        int Ltunel, Ctunel;
+
+        do{
+            Ltunel = random(0, TAMANHOMATRIZ-1);
+            Ctunel = random(0, TAMANHOMATRIZ-1);
+        }while(interativosErrados(Ltunel,Ctunel));
+
+
+        TUNELSEMSAIDA[0][i] = Ltunel;
+        TUNELSEMSAIDA[1][i] = Ctunel;
+    }
+
+    for (int i=0; i < 45; i++){
+        int Lprossiga, Cprossiga;
+
+        do{
+            Lprossiga = random(0, TAMANHOMATRIZ-1);
+            Cprossiga = random(0, TAMANHOMATRIZ-1);
+        }while(interativosErrados(Lprossiga,Cprossiga));
+
+
+        TUNELSEMSAIDA[0][i] = Lprossiga;
+        TUNELSEMSAIDA[1][i] = Cprossiga;
     }
 }
 
@@ -425,7 +508,7 @@ bool inicialValida(char c){
 
 bool vitoria(){
     for(int i=0; i < qtdJogadores; i++){
-        if(INFOJOGADORES[2][i] >= 100){
+        if(INFOJOGADORES[2][i] >= 50){
             cout << "Jogador " << JOGADORES[i] << " Venceu!";nl
             cout << "Parabens!";nl
             return true;
@@ -490,20 +573,13 @@ int main(){
 
     layout();
     aleatorizarCaverna();
-    colocarDiamantes();
+    colocarInterativos();
     deployPlayers();
 
     
     int jogadorAtual = 0;
     do{
-        /*
-        for(int i=0; i < TAMANHOMATRIZ; i++){
-            for(int j=0; j < TAMANHOMATRIZ; j++){
-                cout << TABULEIRO_ESCONDIDO[i][j] << "  ";
-            }
-            nl
-        }
-        */
+
         tabuleiro();
         cout << "Vez do jogador " << JOGADORES[jogadorAtual];nl
         cout << "(w,a,s ou d) para se mover:";
@@ -513,7 +589,7 @@ int main(){
     }while(!vitoria());
 
     cout << "Fim de Jogo, Obrigado por Jogar.";nl
-    cout << "Jogo produzido por Pedro Castello e Patrick Correa.";nl
+    cout << "Jogo produzido por Pedro Castello e Patrick Correa como projeto\ndo final do primeiro periodo de faculdade na UNICENTRO Guarapuava";nl
 
     return 0;
 }
