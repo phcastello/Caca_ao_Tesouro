@@ -46,7 +46,7 @@ Para compilar e executar o jogo, siga os passos abaixo:
 
 1. **Seleção de Jogadores**: O jogo pede para o usuário indicar a quantidade de jogadores (entre 2 e 4) e suas iniciais.
 2. **Movimentação**: Use as teclas `W` (cima), `A` (esquerda), `S` (baixo) e `D` (direita) para movimentar o jogador no tabuleiro.
-3. **Objetivo**: Encontre diamantes no tabuleiro para acumular pontos. O jogo termina quando um jogador alcança 100 pontos.
+3. **Objetivo**: Encontre diamantes no tabuleiro para acumular pontos. O jogo termina quando um jogador alcança 50 pontos.
 
 ## Notas
 
