@@ -32,7 +32,7 @@ char TABULEIRO_ESCONDIDO[TAMANHOMATRIZ][TAMANHOMATRIZ];
 char TABULEIRO_MOSTRAR[TAMANHOMATRIZ][TAMANHOMATRIZ];
 
 
-int DIAMANTES[3][225];
+int DIAMANTES[3][300];
 /*
 DIAMANTES:
 linha 0 = linha
@@ -500,7 +500,7 @@ bool inicialValida(char c){
             return false;
         }
     }
-    if(c == '+' or c == '-' or c == 'D' or c == 'O'){
+    if(c == '|' or c == '-'){
         return false;
     }
     return true;
@@ -563,8 +563,8 @@ int main(){
         cout << "Jogador " << i+1 << " indique sua inicial";nl
         char inicial;
         do{
-            cout << "Lembre-se, a inicial nao pode ser igual a:";
-            cout << "'+', '-', 'D', 'O' e qualquer outra inicial ja usada.";nl
+            cout << "Lembre-se, a inicial nao pode ser igual a ";
+            cout << "qualquer outra inicial ja usada.";nl
             cout << "Contudo, eh possivel existir uma inicial em caixa alta e em caixa baixa ao mesmo tempo.";nl
             cin >> inicial;
         }while(!(inicialValida(inicial)));
