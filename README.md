@@ -1,5 +1,8 @@
 # Jogo de Caça ao Tesouro
 
+<h1><a href="https://phcastello.github.io">Voltar à pagina inicial</a></h1>
+<br>
+
 Este é um jogo em C++ onde jogadores exploram uma caverna em um tabuleiro para encontrar diamantes e evitar paredes e armadilhas. O objetivo é acumular pontos encontrando diamantes, e o primeiro jogador a alcançar 100 pontos vence.
 
 Ao acessar o link abaixo, clique em run, na parte superior da tela ou aperte a tecla `f9` no seu teclado, então, desca a tela até o final.
